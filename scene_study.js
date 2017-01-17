@@ -1,5 +1,4 @@
 // js for three.js scene study. created by morry
-
 var main = function(){
   // create scene object
   var scene = new THREE.Scene();

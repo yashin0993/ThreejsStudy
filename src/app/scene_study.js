@@ -1,0 +1,110 @@
+
+// -------- オプション初期化関数 ---------- //
+var render_option = new Object();
+function InitOption(){
+  render_option["width"]  = $("#render_view").prop("clientWidth");
+  render_option["height"] = $("#render_view").prop("clientHeight");
+  render_option["fov"]    = 60;
+  render_option["near"]   = 1;
+  render_option["far"]    = 10000;
+}
+
+// -------- レンダラー初期化関数 ---------- //
+var renderer;
+function InitRenderer(){
+  // レンダラーオブジェクトを生成(antialiasは有効にする(描画を滑らかにする))
+  renderer = new THREE.WebGLRenderer({antialias: true});
+  renderer.setSize(render_option.width, render_option.height);
+  renderer.setClearColor(0x444444, 1)
+  // 生成したオブジェクトを描画するDOMに追加する
+  document.getElementById("render_view")
+          .appendChild(renderer.domElement);
+}
+
+// -------- カメラ初期化関数 ---------- //
+var camera;
+var controls;
+function InitCamera(){
+  var aspect = render_option.width / render_option.height;
+  camera =  new THREE.PerspectiveCamera( 
+              render_option.fov, 
+              aspect, 
+              render_option.near, 
+              render_option.far 
+            );
+
+  camera.position.set(100, 100, 100);
+  camera.up.set(0, 1, 0);
+  camera.lookAt({x:0, y:0, z:0});
+  //controls = new THREE.OrbitControls(camera,renderer.domElement);
+}
+
+function InitAxis(){
+  var grid_size = 50;
+  var cell_size = 10;
+
+  // グリッドをセット
+  var grid = new THREE.GridHelper(grid_size, cell_size);
+  grid.position.set(0,0,0);
+  scene.add(grid);
+  // 軸をセット
+  var axis = new THREE.AxisHelper(grid_size);
+  axis.position.set(0,1,0);
+  scene.add(axis);
+}
+
+
+// -------- シーン初期化関数 ---------- //
+var scene;
+function InitScene(){
+  scene = new THREE.Scene();
+}
+
+// -------- ライト初期化関数 ---------- //
+var direct_light;
+var ambient_light;
+function InitLight(){ 
+  // 太陽光をシーンに追加
+  direct_light  = new THREE.DirectionalLight(0xCCCCCC, 1.6);
+  direct_light.position = new THREE.Vector3(-100, 500, 800);
+  scene.add(direct_light);
+
+  // 環境光をシーンに追加
+  ambient_light = new THREE.AmbientLight(0x333333);
+  scene.add(ambient_light);
+}
+
+// -------- オブジェクト描画関数 ---------- //
+function InitObject(){
+  // データ取得処理
+  //var data = LoadObjectData();
+
+  var mesh = new THREE.Mesh(
+    new THREE.CubeGeometry(30,30,30),
+    new THREE.MeshPhongMaterial({color:0x888888})
+  );
+
+  scene.add(mesh);
+  mesh.position.set(0,0,0);
+}
+
+// -------- 描画更新関数 ---------- //
+function RenderLoop(){
+  requestAnimationFrame(RenderLoop);
+  //controls.update();
+  renderer.clear();
+  renderer.render(scene, camera);
+}
+
+// -------- メイン処理 ---------- //
+function main(){
+  InitOption();
+
+  InitRenderer();
+  InitScene();
+  InitCamera();
+  InitAxis();
+  InitLight();
+  //InitObject();
+  RenderLoop();
+};

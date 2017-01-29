@@ -1,6 +1,3 @@
-
-
-
 // resizeイベント
 // レンダリングサイズとカメラのアスペクト比を更新
 $(window).on("resize",function(){
